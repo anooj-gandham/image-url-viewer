@@ -14,10 +14,21 @@
             height: 100vh;
             margin: 0;
         }
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 50%;
+        }
         input {
-            width: 80%;
+            width: 50%;
             padding: 10px;
             margin: 10px 0;
+            flex-grow: 1;
+        }
+        button {
+            padding: 10px;
+            cursor: pointer;
         }
         img {
             max-width: 80%;
@@ -29,7 +40,10 @@
 </head>
 <body>
     <h2>Paste Image URL Below</h2>
-    <input type="text" id="imageUrl" placeholder="Enter image URL here..." oninput="displayImage()">
+    <div class="input-container">
+        <input type="text" id="imageUrl" placeholder="Enter image URL here..." oninput="displayImage()">
+        <button onclick="clearInput()">Clear</button>
+    </div>
     <img id="displayedImage" alt="Image will appear here">
 
     <script>
@@ -43,6 +57,11 @@
             } else {
                 imageElement.style.display = 'none';
             }
+        }
+        
+        function clearInput() {
+            document.getElementById('imageUrl').value = '';
+            document.getElementById('displayedImage').style.display = 'none';
         }
     </script>
 </body>
