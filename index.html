@@ -52,6 +52,14 @@
             border: 2px solid #fff;
             border-radius: 10px;
         }
+        metadata {
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        
     </style>
 </head>
 <body>
@@ -61,23 +69,61 @@
         <button onclick="clearInput()">Clear</button>
     </div>
     <img id="displayedImage" alt="Image will appear here">
-
+    <div id="metadata"></div>
     <script>
         function displayImage() {
             const imageUrl = document.getElementById('imageUrl').value;
             const imageElement = document.getElementById('displayedImage');
-            
+            const metadataElement = document.getElementById('metadata');
+
             if (imageUrl) {
+                imageElement.onload = function () {
+                    const width = imageElement.naturalWidth;
+                    const height = imageElement.naturalHeight;
+                    const aspectRatio = (width / height).toFixed(2);
+
+                    // Fetch metadata using HEAD request
+                    fetch(imageUrl, { method: 'HEAD' })
+                        .then(response => {
+                            const type = response.headers.get("Content-Type");
+                            const size = response.headers.get("Content-Length");
+
+                            metadataElement.innerHTML = `
+                                <strong>Metadata:</strong><br>
+                                URL: ${imageUrl}<br>
+                                Dimensions: ${width} x ${height} px<br>
+                                Aspect Ratio: ${aspectRatio}<br>
+                                Format: ${type || 'Unknown'}<br>
+                                Size: ${size ? (size / 1024).toFixed(2) + ' KB' : 'Unknown'}
+                            `;
+                            metadataElement.style.display = 'block';
+                        })
+                        .catch(() => {
+                            metadataElement.innerHTML = `
+                                <strong>Metadata:</strong><br>
+                                URL: ${imageUrl}<br>
+                                Dimensions: ${width} x ${height} px<br>
+                                Aspect Ratio: ${aspectRatio}<br>
+                                Format: Unknown<br>
+                                Size: Unknown
+                            `;
+                            metadataElement.style.display = 'block';
+                        });
+                };
+
                 imageElement.src = imageUrl;
                 imageElement.style.display = 'block';
             } else {
                 imageElement.style.display = 'none';
+                metadataElement.style.display = 'none';
             }
         }
         
         function clearInput() {
             document.getElementById('imageUrl').value = '';
             document.getElementById('displayedImage').style.display = 'none';
+            document.getElementById('metadata').style.display = 'none';
+
         }
     </script>
 </body>
